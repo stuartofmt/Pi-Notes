@@ -1,5 +1,6 @@
 ## Pi Camera on Bullseye
 
+Bullseye uses newer libraries than Buster.
 
 ## Enable the Pi Camera
 
@@ -18,7 +19,7 @@ sudo reboot
 
 ##Testing the Camera
 
-if using libcamera libraries
+if using the recommended libcamera libraries
 
 ```
 libcamera_hello       

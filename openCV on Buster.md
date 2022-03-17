@@ -1,5 +1,9 @@
 ## openCV on Buster
 
+See this site for a full discussion:
+
+https://qengineering.eu/install-opencv-4.5-on-raspberry-pi-4.html
+
 
 ### Caution
 openCV often fails to install correctly on Raspberry Pi when the following command is used.
