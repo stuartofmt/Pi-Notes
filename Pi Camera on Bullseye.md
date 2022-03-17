@@ -3,14 +3,17 @@
 
 ## Enable the Pi Camera
 
-If using the new libcamera libraries (recommended) - he camera should already be enabled by default.
+If using the new libcamera libraries (recommended) - the camera should already be enabled by default.
 
-If using the old legacy libraries - the camera needs to be enabled.
+If using the old legacy libraries (not recommended) - the camera needs to be enabled.
+The legacy camera stack cannot be re-enabled on a 64-bit Raspberry Pi OS release.
 
 ```
 sudo raspi-config
     Interface Option
-        Camera       
+        Legacy Camera 
+        
+sudo reboot              
 ```
 
 ##Testing the Camera
@@ -24,5 +27,5 @@ libcamera_hello
 if using legacy libraries
 
 ```
-libcamera_hello       
+raspistill -v -o test.jpg       
 ```

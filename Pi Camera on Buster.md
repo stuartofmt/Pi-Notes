@@ -10,3 +10,6 @@ sudo raspi-config
 
 ##Testing the Camera
 
+```
+raspistill -v -o test.jpg       
+```

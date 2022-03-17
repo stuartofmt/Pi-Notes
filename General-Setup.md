@@ -1,17 +1,17 @@
-##General Setup
+## General Setup
 
 
 These settings seem to work fine BUT may not be appropriate for all Raspberry Pi variations of CPU, RAM etc.
 
 
-## Update raspi-config.
+### Update raspi-config.
 
 ```
 sudo raspi-config
     Update
 ```
 
-## Expand file system
+### Expand file system
 To make use of the entire micro sd 
 
 ```
@@ -20,7 +20,7 @@ sudo raspi-config
         Expand Filesystem
 ```
 
-## Set GPU memory
+### Set GPU memory
 Many libraries like to make use of GPU - so give it enough to work with.
 
 For P1 3B+ --> Set the GPU memory to 256
@@ -31,7 +31,7 @@ sudo raspi-config
         GPU Memory       
 ```
 
-##  Swap File
+###  Swap File
 Best to do this after the above and after a reboot.
 
 Depending on model of Raspberry Pi the default amount of swap space may (or not) be sufficient.
