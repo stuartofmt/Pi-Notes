@@ -9,3 +9,4 @@ sudo raspi-config
 ```
 
 ##Testing the Camera
+

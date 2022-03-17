@@ -1,5 +1,6 @@
 ##General Setup
 
+
 These settings seem to work fine BUT may not be appropriate for all Raspberry Pi variations of CPU, RAM etc.
 
 
