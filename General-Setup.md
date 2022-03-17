@@ -1,7 +1,7 @@
 ## General Setup
 
 
-These settings seem to work fine BUT may not be appropriate for all Raspberry Pi variations of CPU, RAM etc.
+These settings work well BUT may not be appropriate for all Raspberry Pi variations of CPU, RAM etc.
 
 ### Update raspi-config.
 
@@ -22,7 +22,7 @@ sudo raspi-config
 ### Set GPU memory
 Many libraries like to make use of GPU - so give it enough to work with.
 
-For P1 3B+ --> Set the GPU memory to 256
+For P1 3B+ --> Set the GPU memory to 128
 
 ```
 sudo raspi-config
@@ -34,7 +34,7 @@ sudo raspi-config
 Best to do this after the above and after a reboot.
 
 Depending on model of Raspberry Pi the default amount of swap space may (or not) be sufficient.
-In general 4GB is a sensible minimum.
+In general 4GB is a sensible minimum if using desktop apps such as chrome and doing video manipulation (e.g. ffmpeg).
 
 First check to see what is allocated.
 
