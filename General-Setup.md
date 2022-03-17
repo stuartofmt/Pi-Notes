@@ -1,13 +1,59 @@
 ##General Setup
 
+These settings seem to work fine BUT may not be appropriate for all Raspberry Pi variations of CPU, RAM etc.
 
+
+## Update raspi-config.
+
+```
+sudo raspi-config
+    Update
+```
 
 ## Expand file system
 To make use of the entire micro sd 
 
-## Set GPU
-Many libraries like to make use of 
+```
+sudo raspi-config
+    Advanced Options
+        Expand Filesystem
+```
 
+## Set GPU memory
+Many libraries like to make use of GPU - so give it enough to work with.
+
+For P1 3B+ --> Set the GPU memory to 256
+
+```
+sudo raspi-config
+    Performance Options
+        GPU Memory       
+```
 
 ##  Swap File
-Depending on model of RP the defaultamount of swap space may (or not) be sufficient,  In general 4GB is a sensible minimum.
+Best to do this after the above and after a reboot.
+
+Depending on model of Raspberry Pi the default amount of swap space may (or not) be sufficient.
+In general 4GB is a sensible minimum.
+
+First check to see what is allocated.
+
+```
+free -m
+
+```
+if less than 4096 - make it larger
+
+```
+
+sudo dphys-swapfile swapoff
+
+sudo nano /etc/dphys-swapfile
+     change CONF_SWAPSIZE=4096 and CONF_MAXSWAP=4096
+
+sudo dphys-swapfile setup
+
+sudo dphys-swapfile swapon
+
+sudo reboot
+```

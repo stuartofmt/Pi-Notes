@@ -1,4 +1,4 @@
-openCV typically fails on RP when the following command is used.
+openCV typically fails on Raspberry Pi when the following command is used.
 
 ```
 sudo apt install opencv-contrib-python
