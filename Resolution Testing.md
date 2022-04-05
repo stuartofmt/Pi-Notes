@@ -32,17 +32,17 @@ https://github.com/stuartofmt/Pi-Notes/blob/master/opencv-test.py
 If used on Buster - should be run like this:
 
 ```
-python3 ./opencv-test.py [options]
+python3 ./opencv-test.py [options] 2>/dev/null
 
 ```
 
-If used on Bullseye must be run like this:
+If used on Bullseye must be run with libcamerify:
 ```
-libcamerify python3 ./opencv-test.py [options]
+libcamerify python3 ./opencv-test.py [options] 2>/dev/null
 ```
 
 Options are:
 - -rotate  rotates the image 180 deg
-- -debug   outputs debug messages from libcamera
 - -time    length of time for display (default is 15 sec)
 
+Note: There is no debug mode.  If opencv responses are desired then omit "2>/dev/null"

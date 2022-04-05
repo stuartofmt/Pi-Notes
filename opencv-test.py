@@ -1,4 +1,4 @@
-# camera-test.py
+# opencv-test.py
 
 import cv2
 import time
@@ -24,7 +24,6 @@ def init():
 
     rotateimage = args['rotate']
     display = abs(args['time'][0])
-
 
 class VideoStream:
     # initialize with safe defaults

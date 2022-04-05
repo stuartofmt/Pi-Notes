@@ -1,4 +1,4 @@
-# camera-test.py
+# libcamera-test.py
 
 import cv2
 import time
