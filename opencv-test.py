@@ -30,75 +30,6 @@ def init():
         debug = ' 2>/dev/null'
     display = abs(args['time'][0])
 
-class picams():
-    
-    def __init__(self):
-
-        cmd = 'libcamera-vid --list-cameras'
-        try:
-            res = subprocess.run(cmd, capture_output=True, text=True, check=True, shell=True)
-            if str(res.stderr) != '':
-                result = str(res.stderr)
-        except Exception as e:
-            result = ''
-            print(e)
-        
-        cameraInfo=result.partition('Available cameras')[2]
-        # find the cameraids - form is one or two digits followed by :
-        cameraids = re.findall('(\s\d\s:|\s\d{2}:)', cameraInfo)
-        
-        # get the camera numbers
-        self.cameras = []
-        for camera in cameraids:
-            newid = re.search('\d{1,2}', camera)
-            if newid is not None:
-                self.cameras.append(newid.group())
-        # get the data between / after the camerais
-        cameradata = re.split('\s\d\s:|\s\d{2}:', cameraInfo) 
-        del cameradata[0]  # need to ignore the first result
-        
-        # parse out the name and resolutions for each camera
-        name = []
-        reses = []
-        for camera in cameradata:
-            index = cameradata.index(camera)
-            camname = re.search('imx\d{3}',camera)
-            print(camname)
-            if camname is not None:  # Ignore other types
-                name.append(camname.group())
-                reses.append(re.findall('([0-9]{3,4})x([0-9]{3,4})', camera))
-            else:
-                del self.cameras[index]
-        # get rid of unwanted resolutions
-        self.resolutions = {}
-        for cam in self.cameras:
-            self.resolutions[cam] = {}
-            resolut = []
-            for res in reses[int(cam)]:
-                res = list(res) # Convert to list
-                if res in resolut or int(res[0]) < 320 or int(res[1]) < 240:
-                    pass
-                else:
-                    resolut.append(res)
-            sortedresolut = sorted(resolut, key=lambda x:int(x[0]))
-            self.resolutions[cam] = sortedresolut               
-        # Build the camera info
-        self.available_cameras= {}
-        for camera in self.cameras:
-            self.available_cameras[camera] = {}
-            self.available_cameras[camera]['name'] = name[int(camera)]
-            
-    def get_cameras(self):
-        return self.cameras
-    
-    def get_name(self,cam):
-        return self.available_cameras[str(cam)]['name']
-    
-    def get_resolutions(self, cam):
-        resolutions = self.resolutions[str(cam)]
-        resolutions_str = str(resolutions).strip('[]')
-        return resolutions_str, resolutions    
-
 
 class VideoStream:
     # initialize with safe defaults
@@ -112,15 +43,14 @@ class VideoStream:
             format = res[2]
             fourcc = cv2.VideoWriter_fourcc(*format)
             self.stream.set(cv2.CAP_PROP_FOURCC, fourcc)
-            self.stream.set(cv2.CAP_PROP_FPS, frate)
+            #self.stream.set(cv2.CAP_PROP_FPS, frate)
             #self.stream.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Just to keep things tidy and small
         (self.grabbed, self.frame) = self.stream.read()
 
         # initialize the thread name
         self.name = name
 
-        # initialize the variable used to indicate if the thread should
-        # be stopped
+        # initialize the variable used to indicate if the thread should be stopped
         self.stopped = False
 
     def start(self):
@@ -133,7 +63,6 @@ class VideoStream:
     def update(self):
         # keep looping infinitely until the thread is stopped
         while True:
-            # if the thread indicator variable is set, stop the thread
             if self.stopped:
                 self.stream.release()
                 return
@@ -150,8 +79,6 @@ class VideoStream:
         self.stopped = True
 
 def findCameras():
-    if raspi:
-        return raspiInfo.get_cameras()
     return findopencvCameras()
 
 def findopencvCameras():
@@ -164,39 +91,35 @@ def findopencvCameras():
     return available_cameras
 
 def getCameraname(cam):
-    if raspi:
-        return raspiInfo.get_name(cam)
     return ''
 
-
-
 def getResolutions(cam):
-    if raspi:
-        return raspiInfo.get_resolutions(cam)
     return getopencvResolutions()
 
 def getopencvResolutions():
     resolution = []                  # Note: needs to be ordered in size to support later comparisons
-    resolution.append([2048, 1080])  # Default
-    resolution.append([1920, 1800])
-    resolution.append([1640, 1232])
-    resolution.append([1280, 720])
+#    resolution.append([3280, 2464])
+#    resolution.append([2048, 1080])
+#    resolution.append([1920, 1800])
+#    resolution.append([1640, 1232])
+#    resolution.append([1280, 720])
     resolution.append([800, 600])
-    resolution.append([720, 480])
-    resolution.append([640, 480])
-    resolution.append([320, 240])
-    allowed_formats = ('BGR3', 'YUY2', 'MJPG','JPEG', 'H264', 'IYUV')   
+#    resolution.append([720, 480])
+#    resolution.append([640, 480])
+#    resolution.append([320, 240])
+#    allowed_formats = ('BGR3', 'YUY2', 'MJPG','JPEG', 'H264', 'IYUV')
+    allowed_formats = ('MJPG',)
 
     available_res = []
     available_resolutions_str = []
-    print('\n Scanning for resolutions and formats -- this can take some time ...')
-
-    #stream = cv2.VideoCapture(int(cam))
+    print('\nScanning for resolutions and formats -- this can take some time ...')
 
     for res in resolution:
+        print('.', end='', flush=True)
         width = res[0]
         height = res[1]
         for form in allowed_formats:
+            print('.', end='', flush=True)
             stream = cv2.VideoCapture(int(camera)) # Make sure we have a new clean connection
             if not stream.isOpened:
                 print('Could not open camera: ' + str(camera))
@@ -221,46 +144,9 @@ def getopencvResolutions():
     resolutions_str = ''.join(available_resolutions_str)
     return resolutions_str, available_resolutions 
 
-def startPicam(cam, res):
-    # Current settings are inconsistent. The lookup is a workaround
-    commands = {}
-    commands['640']= 'libcamera-vid -t 0 --width 640 --height 480 --mode 1640:1232'
-    commands['1640'] = 'libcamera-vid -t 0 --width 1640 --height 1232'
-    commands['1920'] = 'libcamera-vid -t 0 --width 1920 --height 1080 --mode 3280:2464'
-    commands['3280'] = 'libcamera-vid -t 0 --mode 3280:2464'
-    w = str(res[0])
-    h = str(res[1])
-    cmdtxt = []
-    cmdtxt.append(commands[str(res[0])])
-    cmdtxt.append(' --nopreview --inline  --listen')
-    """
-    cmdtxt.append(' --width ' + w) 
-    cmdtxt.append(' --height ' + h)
-    #cmdtxt.append(' --mode 1640:1232')
-    cmdtxt.append(' --mode ' + w + ':' + h)
-    """
-    if rotateimage:
-        cmdtxt.append(' --vflip --hflip')   
-    cmdtxt.append(' --camera ' + str(cam))
-    cmdtxt.append(' -o tcp://0.0.0.0:5000')
-    if debug != '':
-        cmdtxt.append(debug)
-    cmd = ''.join(cmdtxt)
-
-    print('\nStarting camera with this command')
-    print(cmd)
-    try:
-        newproc = subprocess.Popen(cmd, shell=True, start_new_session=True)  # run the program
-        time.sleep(2) # Give it some time to startup
-    except Exception as e:
-        print('Problem starting libcamera-vid')
-        print(e)
-
-def display(cam, res):
-    
-    displaytime = 15 #seconds
+def camdisplay(cam, res):
     print('\n\n ===============  Camera ' + str(cam) + '  ===================== \n\n')
-    print('Will attempt to display the following resolution for ' + str(displaytime) + ' seconds\n')
+    print('Will attempt to display the following resolution for ' + str(display) + ' seconds\n')
     print('Any keypress will close the display\n')
 
     print('################################################')
@@ -274,12 +160,7 @@ def display(cam, res):
         input()
         # start the stream capture
     framerate = 15 # keep it low for testing
-    if raspi:
-        startPicam(cam, res)
-        cam = 'tcp://0.0.0.0:5000'
-        windowname = 'Camera ' + str(cam) + ' ' + str(res[0]) + ' x ' + str(res[1])
-    else:
-        windowname = 'Camera ' + str(cam) + ' ' + str(res[0]) + ' x ' + str(res[1]) + ' format ' + str(res[2])
+    windowname = 'Camera ' + str(cam) + ' ' + str(res[0]) + ' x ' + str(res[1]) + ' format ' + str(res[2])
 
     stream = VideoStream(cam, res, framerate)
     stream.start()
@@ -290,7 +171,7 @@ def display(cam, res):
     errors = 0
     timeout = 0
     starttime = time.time()
-    while  time.time() - starttime < displaytime:
+    while  time.time() - starttime < display:
         time.sleep(1/framerate) # Don't ask for frames any quicker than possible
         ret = None
         frame = None
@@ -336,34 +217,13 @@ def testCamera(cam):
         print('\n The camera did not provide any resolution information')
         
     for res in resolutions:
-        display(int(cam), res)
+        camdisplay(int(cam), res)
 
 ## Start of program
-        
-init()
-
 if __name__ == "__main__":
-        
-            
-    keypress = 'n'
-    while keypress not in ['p', 'a', 'q']:
-        print('What type of camera? Make a selection and press enter\n')
-        print('(p) - Raspberry Pi using libcamera')
-        print('(a) - All cameras. Pi and USB using opencv')
-        print('(q) - quit')
-        keypress = input()
-    raspi = False    
-    if keypress == 'p':
-        raspi = True
-        raspiInfo = picams()
-    elif keypress == 'q':
-        sys.exit(0)
-    elif keypress == 'a':
-            print('\nNote:\n')
-            print('opencv may fully support Pi Cameras with libcamera yet')
-            print('Camera numbers may also be different than with libcamaera')
-            print('Try running "libcamerify python3 ./<this program> 2>/dev/null"')
-            
+
+    init()
+
     keypress=''
     while keypress not in ['a', 'm', 'q']:        
         print('\nSelect an option and press enter\n')
