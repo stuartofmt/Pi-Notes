@@ -17,6 +17,7 @@ Tests embedded and USB cameras. Only tests video output.
 ### libcamera-test.py
 Can be used on Bullseye or later releases with libcamera enabled.
 Download from here:
+
 https://github.com/stuartofmt/Pi-Notes/blob/master/libcamera-test.py
 
 Is run like this:
@@ -32,6 +33,7 @@ Options are:
 ### opencv-test.py
 Can be used on Buster (and earlier) and Bullseye.
 Download from here:
+
 https://github.com/stuartofmt/Pi-Notes/blob/master/opencv-test.py
 
 If used on Buster - should be run like this:
