@@ -17,17 +17,12 @@ def init():
             allow_abbrev=False)
     # Options
     parser.add_argument('-rotate', action='store_true', help='If omitted = Do not rotate')
-    parser.add_argument('-debug', action='store_true', help='If omitted = Limit debug messages ')
     parser.add_argument('-time', type=int, nargs=1, default=[15], help='Image display time - default 15 sec')
     args = vars(parser.parse_args())
 
-    global rotateimage, debug, display
+    global rotateimage, display
 
     rotateimage = args['rotate']
-    if args['debug']:
-        debug = ''
-    else:
-        debug = ' 2>/dev/null'
     display = abs(args['time'][0])
 
 
@@ -35,16 +30,19 @@ class VideoStream:
     # initialize with safe defaults
     def __init__(self, src=0, res=[800,600,'BGR3'], frate=15, name="VideoStream"):
         # initialize the video camera stream and read the first frame
-        # from the stream
         self.stream = cv2.VideoCapture(src)
         if isinstance(src, int):  #  Assume cv2 can manipulate
-            self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, res[0])
-            self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, res[1])
-            format = res[2]
-            fourcc = cv2.VideoWriter_fourcc(*format)
-            self.stream.set(cv2.CAP_PROP_FOURCC, fourcc)
-            #self.stream.set(cv2.CAP_PROP_FPS, frate)
-            #self.stream.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Just to keep things tidy and small
+            try:
+                self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, res[0])
+                self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, res[1])
+                format = res[2]
+                fourcc = cv2.VideoWriter_fourcc(*format)
+                self.stream.set(cv2.CAP_PROP_FOURCC, fourcc)
+                #self.stream.set(cv2.CAP_PROP_FPS, frate)
+                #self.stream.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Just to keep things tidy and small
+            except Exeption as e:
+                print('opencv error')
+                print(e)
         (self.grabbed, self.frame) = self.stream.read()
 
         # initialize the thread name
@@ -98,17 +96,16 @@ def getResolutions(cam):
 
 def getopencvResolutions():
     resolution = []                  # Note: needs to be ordered in size to support later comparisons
-#    resolution.append([3280, 2464])
-#    resolution.append([2048, 1080])
-#    resolution.append([1920, 1800])
-#    resolution.append([1640, 1232])
-#    resolution.append([1280, 720])
+    resolution.append([3280, 2464])
+    resolution.append([2048, 1080])
+    resolution.append([1920, 1800])
+    resolution.append([1640, 1232])
+    resolution.append([1280, 720])
     resolution.append([800, 600])
-#    resolution.append([720, 480])
-#    resolution.append([640, 480])
-#    resolution.append([320, 240])
-#    allowed_formats = ('BGR3', 'YUY2', 'MJPG','JPEG', 'H264', 'IYUV')
-    allowed_formats = ('MJPG',)
+    resolution.append([720, 480])
+    resolution.append([640, 480])
+    resolution.append([320, 240])
+    allowed_formats = ('BGR3', 'YUY2', 'MJPG','JPEG', 'H264', 'IYUV')
 
     available_res = []
     available_resolutions_str = []
@@ -125,14 +122,18 @@ def getopencvResolutions():
                 print('Could not open camera: ' + str(camera))
                 stream.release()
                 break
-            stream.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-            stream.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-            fourcc = cv2.VideoWriter_fourcc(*form)
-            stream.set(cv2.CAP_PROP_FOURCC, fourcc)
-            # Now try to read back
-            camwidth = int(stream.get(cv2.CAP_PROP_FRAME_WIDTH))
-            camheight = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            cc = stream.get(cv2.CAP_PROP_FOURCC)
+            try:
+                stream.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+                stream.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+                fourcc = cv2.VideoWriter_fourcc(*form)
+                stream.set(cv2.CAP_PROP_FOURCC, fourcc)
+                # Now try to read back
+                camwidth = int(stream.get(cv2.CAP_PROP_FRAME_WIDTH))
+                camheight = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                cc = stream.get(cv2.CAP_PROP_FOURCC)
+            except Exeption as e:
+                print('opencv error')
+                print(e)
             camformat = "".join([chr((int(cc) >> 8 * i) & 0xFF) for i in range(4)])
             reported_resolution = [camwidth, camheight, camformat]
             if reported_resolution not in available_res and camformat in allowed_formats:
@@ -159,7 +160,7 @@ def camdisplay(cam, res):
         print('\nPress any key to continue...')
         input()
         # start the stream capture
-    framerate = 15 # keep it low for testing
+    framerate = 10 # keep it low for testing
     windowname = 'Camera ' + str(cam) + ' ' + str(res[0]) + ' x ' + str(res[1]) + ' format ' + str(res[2])
 
     stream = VideoStream(cam, res, framerate)
@@ -189,18 +190,19 @@ def camdisplay(cam, res):
         
         if ret is False or ret is None:
             if timeout == 0:
-                print('Waiting')
+                print('Possible missed frame')
             print('.', end='', flush=True)
             timeout = timeout + 1
-            if timeout > framerate*(displaytime-1):  # Mostly no frames  
+            if timeout > framerate*(display-1):  # Mostly no frames  
                 print('\nConnection timed out')
                 break
             continue
         else:
             timeout = 0  # reset if it starts displaying     
-            resized = imutils.resize(frame, width=newwidth, inter=cv2.INTER_LINEAR)    
-            #resized = frame
-            cv2.imshow(windowname, resized)
+            frame = imutils.resize(frame, width=newwidth, inter=cv2.INTER_LINEAR)    
+            if rotateimage:
+                frame = imutils.rotate(frame, 180)
+            cv2.imshow(windowname, frame)
         if cv2.waitKey(1) != -1:
             break
 
