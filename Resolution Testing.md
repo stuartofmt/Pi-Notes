@@ -1,13 +1,18 @@
 ## Resolution Testing
-Two test scripts written in python.
-libcamera-test.py - only tests embedded cameras. Can test both still and video output.<br>
-opencv-test.py - tests embedded and USB cameras. Only tests video output.
+This note describes two test scripts written in python.
 
+### libcamera-test.py
+Tests embedded cameras. Can test both still and video output.<br><br>
+
+### opencv-test.py
+Tests embedded and USB cameras. Only tests video output.
+
+### Scope
 - [1] These scripts attempt to display common / available resolutions.<br>
-- [2] Not all combinations will produce the desired display.<br>
-- [3] Supported combinations may be different between libcamera and openCV.<br>
-- [4] Camera numbers may be different between libcamera and openCV.
-
+- [2] Not all combinations will produce the desired display due to differences in camera characteristics.<br>
+- [3] Supported combinations may behave differently between libcamera and openCV.<br>
+- [4] Camera numbers may be different in libcamera and openCV.
+- [5] Multiple logical cameras can be found for each physical camera
 
 ### libcamera-test.py
 Can be used on Bullseye or later releases with libcamera enabled.
