@@ -42,7 +42,7 @@ def init():
         print(result)
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         print('libcamera-vid is already in use.')
-        print('Check with ps - ef | grep libcamera-vid')
+        print('Can be killed with kill -9 `pgrep -f libcamera-vid`')
         print('Exiting')
         print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         sys.exit(0)
