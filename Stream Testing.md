@@ -14,7 +14,7 @@ Can be used on Bullseye or later releases with libcamera enabled.
 https://github.com/stuartofmt/Pi-Notes/blob/master/Resolution%20Testing.md
 
 
-Download from here:
+Download stream-test.py from here:
 
 https://github.com/stuartofmt/Pi-Notes/blob/master/stream-test.py
 
