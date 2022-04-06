@@ -27,5 +27,7 @@ https://github.com/stuartofmt/Pi-Notes/blob/master/Pi%20Camera%20on%20Bullseye.m
 
 https://github.com/stuartofmt/Pi-Notes/blob/master/Resolution%20Testing.md
 
+### Stream Testing
 
+https://github.com/stuartofmt/Pi-Notes/blob/master/Stream%20Testing.md
 
