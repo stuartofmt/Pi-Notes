@@ -1,5 +1,7 @@
 ## Resolution Testing
 This note describes two test scripts written in python.
+The purpose of these is to help identify the best camera resolution and format settings.
+
 
 ### libcamera-test.py
 Tests embedded cameras. Can test both still and video output.<br><br>
