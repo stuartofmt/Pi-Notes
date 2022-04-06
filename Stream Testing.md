@@ -28,7 +28,7 @@ Options are:
 - -pistream  the streaming method.  Default is tcp://0.0.0.0:5000
 - -rotate  rotates the image 0, 90, 180 or 270 deg
 
-The form of the command to start the streaming is
+The libcamera command the script uses to start streaming is
 ```
 libcamera-vid -t 0  --nopreview --inline  --listen <-pires> --camera <-camera>  -o <-pistream>
 ```
