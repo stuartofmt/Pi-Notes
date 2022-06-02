@@ -82,7 +82,7 @@ def findopencvCameras():
     available_cameras = []
     for index in range(0, 20):
         stream = cv2.VideoCapture(index)
-        if stream.isOpened():
+        if stream.read()[0]:  # use instead of isOpened as it confirms it can be read
             available_cameras.append(str(index))   # using string for convenience
         stream.release()
     return available_cameras
