@@ -30,7 +30,7 @@ sudo raspi-config
         GPU Memory       
 ```
 
-It is best to rebbot at this point.
+It is best to reboot at this point.
 
 
 ###  Swap File
