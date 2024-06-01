@@ -1,0 +1,9 @@
+#Stop DWC browser on SBC startup
+
+The browser is started with:
+/usr/bin/launch-dwc
+
+Simplest way to disable is to rename e.g.
+sudo mv /usr/bin/launch-dwc /usr/bin/xlaunch-dwc
+
+Can then udit desktop shortcut if desired
