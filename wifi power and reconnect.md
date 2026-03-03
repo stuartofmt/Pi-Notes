@@ -2,17 +2,18 @@
 
 
 Inside /etc/NetworkManager/conf.d, create a new file with:
-
+```
 [connection]
 # Values are 0 (use default), 1 (ignore/don't touch), 2 (disable) or 3 (enable).
 wifi.power_save = 2
-
+```
 
 #change connection retry amount
 
 And turn on permanent connection retries, in the xyz.nmconnection file (whwre xyz is the connection being used),
 located at /etc/NetworkManager/system-connections like:
 
+```
 [connection]
 id=MyWiFi
 uuid=<connection uid>
@@ -40,3 +41,4 @@ addr-gen-mode=default
 method=auto
 
 [proxy]
+```
