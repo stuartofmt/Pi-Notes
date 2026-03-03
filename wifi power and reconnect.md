@@ -1,11 +1,16 @@
 # Set wifi sleep power to disable
 
 
-Inside /etc/NetworkManager/conf.d, create a new file with:
+disable at each boot with cron
 ```
-[connection]
-# Values are 0 (use default), 1 (ignore/don't touch), 2 (disable) or 3 (enable).
-wifi.power_save = 2
+$ sudo crontab -e
+
+# which opens the root crontab in your chosen editor...
+# add the following line at the bottom of the root crontab:
+
+@reboot /usr/sbin/iw wlan0 set power_save off > /home/<user>/power_save_log.txt 2>&1
+
+# be sure to substitute a valid folder name for '<user>' in the line above
 ```
 
 #change connection retry amount
